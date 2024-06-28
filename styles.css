@@ -1,0 +1,16 @@
+body {
+	font-family: fantasy;
+	text-align: center;
+	background-color: gold;
+}
+
+h1 {
+	margin-top: 20px;
+}
+
+canvas {
+	border: 1px solid #000;
+	margin: 20px auto;
+	display: block;
+	background-color: #fff;
+}
