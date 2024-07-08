@@ -239,3 +239,22 @@ gameLoop();
 		<!--
 <input type="text" id="inputField" placeholder="skriv noget">
 		-->
+
+
+function createNewTower(x, y) {
+	if (towersCreatedThisRound < 2) {
+		towersCreatedThisRound++;
+		return {
+			x: x,
+			y: y,
+			width: 20,
+			height: 20,
+			range: 200,
+			shootInterval: 1000,
+			lastShootTime: 0
+		};
+	}
+	else {
+		console.log("ikke flere")
+	}
+}

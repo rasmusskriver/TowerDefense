@@ -9,6 +9,13 @@ function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// Starter den første runde
+document.getElementById('startButton').addEventListener('click', () => {
+	startNyRunde();
+	visbesked();
+	console.log(towersCreatedThisRound)
+});
+
 // Initialiserer arrays til at holde firkanter, projektiler og tårne
 let firkanter = [];
 let projektiler = [];
@@ -17,6 +24,8 @@ let runde = 1;
 const maxRunder = 10;
 const firkanterPrRunde = 5;
 let rundeAktiv = false;
+let animationId;
+let towersCreatedThisRound = 0;
 
 // Funktion til at generere en ny firkant
 function createNewSquare() {
@@ -43,6 +52,7 @@ function createNewProjektil(x, y, target) {
 
 // Funktion til at generere et nyt tårn
 function createNewTower(x, y) {
+	towersCreatedThisRound++;
 	return {
 		x: x,
 		y: y,
@@ -56,21 +66,46 @@ function createNewTower(x, y) {
 
 // Funktion til at starte en ny runde
 function startNyRunde() {
+
+	towersCreatedThisRound = 0;
+	cancelAnimationFrame(animationId);
 	if (runde <= maxRunder) {
 		rundeAktiv = true;
+
 		for (let i = 0; i < firkanterPrRunde * runde; i++) {
 			firkanter.push(createNewSquare());
 		}
-		// Viser besked om ny runde i 2 sekunder
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = "yellow";
-		ctx.font = "30px Arial";
-		ctx.fillText(`Runde ${runde} starter!`, canvas.width / 2 - 100, canvas.height / 2);
-		runde++;
 		setTimeout(() => {
 			animate();
 		}, 2000);
+
 	}
+}
+
+function visbesked() {
+	// Viser besked om ny runde i 2 sekunder
+	ctx.fillStyle = "yellow";
+	ctx.font = "30px Arial";
+	ctx.fillText(`Runde ${runde} starter!`, canvas.width / 2 - 100, canvas.height / 2);
+	runde++;
+}
+function visBesked() {
+	// Find det element, hvor beskeden skal vises
+	let beskedContainer = document.getElementById('besked-container');
+	// Fjern eksisterende besked, hvis der er en
+	while (beskedContainer.firstChild) {
+		beskedContainer.removeChild(beskedContainer.firstChild);
+	}
+
+	// Opret en besked
+	let besked = document.createElement('p');
+	besked.textContent = 'Du kan ikke lave flere tårne denne runde';
+
+	// Tilføj beskeden til containeren
+	beskedContainer.appendChild(besked);
+    setTimeout(function() {
+        beskedContainer.removeChild(besked);
+    }, 5000); // 5000 ms = 5 sekunder
 }
 
 function drawSquare(square) {
@@ -157,30 +192,26 @@ function updateAndDrawTowers(time) {
 
 // Tilføjer et tårn ved klik på canvas
 canvas.addEventListener('click', (event) => {
-	const rect = canvas.getBoundingClientRect();
-	const x = event.clientX - rect.left;
-	const y = event.clientY - rect.top;
-	taarn.push(createNewTower(x, y));
+	if (towersCreatedThisRound < 3) {
+		towersCreatedThisRound++;
+		const rect = canvas.getBoundingClientRect();
+		const x = event.clientX - rect.left;
+		const y = event.clientY - rect.top;
+		taarn.push(createNewTower(x, y));
+	}
+	else {
+		visBesked()
+	}
 });
 
 // Funktionerne skal jo også lige skubbes i gang
 function animate(time) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height); // Rydder canvas
-
 	firkanter.forEach(updateSquare);
 	firkanter.forEach(drawSquare);
 	removeOffScreenSquares();
-
 	updateAndDrawProjektiler();
 	updateAndDrawTowers(time);
 
-	if (firkanter.length === 0 && rundeAktiv) {
-		rundeAktiv = false;
-		setTimeout(startNyRunde, 1000); // Vent 1 sekund før ny runde starter
-	} else {
-		requestAnimationFrame(animate);
-	}
+	animationId = requestAnimationFrame(animate);
 }
-
-// Starter den første runde
-startNyRunde();
