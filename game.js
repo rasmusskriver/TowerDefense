@@ -11,21 +11,27 @@ function getRandomInt(min, max) {
 
 // Starter den første runde
 document.getElementById('startButton').addEventListener('click', () => {
+	if (antalFjernet > 10) {
+console.log("der er game over")
+	}
+	else {
 	startNyRunde();
 	visbesked();
-	console.log(towersCreatedThisRound)
+	}
 });
 
 // Initialiserer arrays til at holde firkanter, projektiler og tårne
+const maxRunder = 10;
+const firkanterPrRunde = 5;
 let firkanter = [];
 let projektiler = [];
 let taarn = [];
 let runde = 1;
-const maxRunder = 10;
-const firkanterPrRunde = 5;
 let rundeAktiv = false;
 let animationId;
-let towersCreatedThisRound = 0;
+let towersCreatedThisRound = 50;
+let antalSkudt = 0;
+let antalFjernet = 0;
 
 // Funktion til at generere en ny firkant
 function createNewSquare() {
@@ -34,7 +40,7 @@ function createNewSquare() {
 		y: getRandomInt(0, canvas.height - 50),
 		width: 50,
 		height: 50,
-		speed: getRandomInt(1, 2)
+		speed: getRandomInt(1 + runde, 2 + runde)
 	};
 }
 
@@ -52,7 +58,6 @@ function createNewProjektil(x, y, target) {
 
 // Funktion til at generere et nyt tårn
 function createNewTower(x, y) {
-	towersCreatedThisRound++;
 	return {
 		x: x,
 		y: y,
@@ -67,11 +72,11 @@ function createNewTower(x, y) {
 // Funktion til at starte en ny runde
 function startNyRunde() {
 
-	towersCreatedThisRound = 0;
+
 	cancelAnimationFrame(animationId);
 	if (runde <= maxRunder) {
 		rundeAktiv = true;
-
+		towersCreatedThisRound += 1;
 		for (let i = 0; i < firkanterPrRunde * runde; i++) {
 			firkanter.push(createNewSquare());
 		}
@@ -82,12 +87,26 @@ function startNyRunde() {
 	}
 }
 
+function GameOver() {
+	if (antalFjernet > 10) {
+
+		cancelAnimationFrame(animationId);
+		// Viser besked om ny runde i 2 sekunder
+		ctx.fillStyle = "red";
+		ctx.font = "30px Arial";
+		ctx.fillText(`GAME OVER`, canvas.width / 2 - 100, canvas.height / 2);
+	}
+}
+
 function visbesked() {
+
+	if (runde <= maxRunder) {
 	// Viser besked om ny runde i 2 sekunder
 	ctx.fillStyle = "yellow";
 	ctx.font = "30px Arial";
 	ctx.fillText(`Runde ${runde} starter!`, canvas.width / 2 - 100, canvas.height / 2);
 	runde++;
+	}
 }
 function visBesked() {
 	// Find det element, hvor beskeden skal vises
@@ -103,9 +122,9 @@ function visBesked() {
 
 	// Tilføj beskeden til containeren
 	beskedContainer.appendChild(besked);
-    setTimeout(function() {
-        beskedContainer.removeChild(besked);
-    }, 5000); // 5000 ms = 5 sekunder
+	setTimeout(function() {
+		beskedContainer.removeChild(besked);
+	}, 5000); // 5000 ms = 5 sekunder
 }
 
 function drawSquare(square) {
@@ -119,7 +138,51 @@ function updateSquare(square) {
 
 // Funktion til at fjerne firkanter, der er ude af skærmen eller ramt af projektiler
 function removeOffScreenSquares() {
-	firkanter = firkanter.filter(square => square.x <= canvas.width + square.width && !square.hit);
+    // Fjern firkanter der er ude af skærmen
+    firkanter = removeOffScreen(firkanter);
+
+    // Fjern firkanter der er ramt
+    firkanter = removeHitSquares(firkanter);
+}
+
+function removeOffScreen(firkanter) {
+    // Filtrer ud firkanter der er ude af skærmen
+    return firkanter.filter(square => square.x <= canvas.width + square.width);
+}
+
+function removeHitSquares(firkanter) {
+    // Filtrer ud firkanter der er ramt
+    return firkanter.filter(square => !square.hit);
+}
+
+function logHitSquares(firkanter) {
+	// Gennemgår hver firkant
+	firkanter.forEach(square => {
+		// Tjekker om firkanten er ramt
+	if (square.hit) {
+			antalSkudt++;
+			document.getElementById('antalSkudt').innerText = antalSkudt;
+			if (antalSkudt % 10 === 0) {
+				towersCreatedThisRound += 2;
+			}
+		}
+	});
+}
+
+function countAndDisplayRemoved(firkanter) {
+    // Gennemgår hver firkant
+    firkanter.forEach(square => {
+        // Tjekker om firkanten er fjernet fra banen
+        if (square.x > canvas.width + square.width) {
+            antalFjernet++;
+            // Opdaterer HTML-elementet med id 'antalFjernet' for at vise antallet af fjernede firkanter
+            document.getElementById('antalFjernet').innerText = antalFjernet;
+        }
+    });
+}
+
+function AntalTaarneDerKanBygges() {
+	document.getElementById('antalTaarne').innerText = towersCreatedThisRound
 }
 
 // Funktion til at opdatere og tegne projektiler
@@ -192,12 +255,12 @@ function updateAndDrawTowers(time) {
 
 // Tilføjer et tårn ved klik på canvas
 canvas.addEventListener('click', (event) => {
-	if (towersCreatedThisRound < 3) {
-		towersCreatedThisRound++;
+	if (towersCreatedThisRound > 0) {
 		const rect = canvas.getBoundingClientRect();
 		const x = event.clientX - rect.left;
 		const y = event.clientY - rect.top;
 		taarn.push(createNewTower(x, y));
+		towersCreatedThisRound--;
 	}
 	else {
 		visBesked()
@@ -207,8 +270,13 @@ canvas.addEventListener('click', (event) => {
 // Funktionerne skal jo også lige skubbes i gang
 function animate(time) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height); // Rydder canvas
+	GameOver();
+
+AntalTaarneDerKanBygges();
 	firkanter.forEach(updateSquare);
 	firkanter.forEach(drawSquare);
+	logHitSquares(firkanter);
+	countAndDisplayRemoved(firkanter);
 	removeOffScreenSquares();
 	updateAndDrawProjektiler();
 	updateAndDrawTowers(time);

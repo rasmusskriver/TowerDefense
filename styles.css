@@ -22,3 +22,30 @@ canvas {
     background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
     color: white;
 }
+#antalSkudtDIV {
+
+    position: fixed;
+    top: 10px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
+    color: white;
+}
+#antalfjernetDIV {
+
+    position: fixed;
+    top: 50px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
+    color: white;
+}
+#antalTaarneDIV {
+
+    position: fixed;
+    top: 100px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
+    color: white;
+}

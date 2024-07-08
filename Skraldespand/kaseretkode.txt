@@ -258,3 +258,21 @@ function createNewTower(x, y) {
 		console.log("ikke flere")
 	}
 }
+
+
+
+// function removeOffScreenSquares() {
+//	firkanter = firkanter.filter(square => square.x <= canvas.width + square.width && !square.hit);
+//}
+
+
+
+function logHitSquares(firkanter) {
+    // Filter squares that have been hit
+    const hitSquares = firkanter.filter(square => square.hit);
+    // Log the hit squares
+    // console.log(hitSquares);
+if square = hit {
+	console.log("hit")
+	}
+}
