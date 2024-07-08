@@ -2,6 +2,48 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Initialiserer arrays til at holde firkanter, projektiler og tårne
+const maxRunder = 50;
+const firkanterPrRunde = 20;
+let firkanter = [];
+let projektiler = [];
+let taarn = [];
+let runde = 1;
+let rundeAktiv = false;
+let animationId;
+let towersCreatedThisRound = 10;
+let antalSkudt = 0;
+let antalFjernet = 0;
+let upgradeLevel = 0;
+let rangeNY = 200;
+let shootIntervalNY = 1000;
+let money = 0; // Startpenge
+
+function upgradeTower() {
+    const upgradeCost = 50; // Omkostning for opgradering
+
+    // Tjek om der er nok penge til opgraderingen
+    if (money >= upgradeCost) {
+        // Definer hvor meget vi ønsker at opgradere tårnet med
+        const RangeOpraderAmount = 50;
+        const shootIntervalAmoun = -100;
+
+        // Opdater tårnets attributter
+        rangeNY += RangeOpraderAmount;
+        shootIntervalNY += shootIntervalAmoun;
+
+        // Opdater pengebeholdning og opgraderingsniveau
+        money -= upgradeCost;
+        upgradeLevel++;
+
+        // Opdater HTML-elementer
+        document.getElementById('Moneys').textContent = money;
+        document.getElementById('upgradeLevel').textContent = upgradeLevel;
+    } else {
+        alert("Du har ikke nok penge til at opgradere tårnet.");
+    }
+}
+
 // Funktion til at generere et tilfældigt heltal mellem min og max
 function getRandomInt(min, max) {
 	min = Math.ceil(min);
@@ -12,26 +54,13 @@ function getRandomInt(min, max) {
 // Starter den første runde
 document.getElementById('startButton').addEventListener('click', () => {
 	if (antalFjernet > 10) {
-console.log("der er game over")
+		console.log("der er game over")
 	}
 	else {
-	startNyRunde();
-	visbesked();
+		startNyRunde();
+		visbesked();
 	}
 });
-
-// Initialiserer arrays til at holde firkanter, projektiler og tårne
-const maxRunder = 10;
-const firkanterPrRunde = 5;
-let firkanter = [];
-let projektiler = [];
-let taarn = [];
-let runde = 1;
-let rundeAktiv = false;
-let animationId;
-let towersCreatedThisRound = 50;
-let antalSkudt = 0;
-let antalFjernet = 0;
 
 // Funktion til at generere en ny firkant
 function createNewSquare() {
@@ -40,7 +69,7 @@ function createNewSquare() {
 		y: getRandomInt(0, canvas.height - 50),
 		width: 50,
 		height: 50,
-		speed: getRandomInt(1 + runde, 2 + runde)
+		speed: getRandomInt(1, 6)
 	};
 }
 
@@ -63,20 +92,23 @@ function createNewTower(x, y) {
 		y: y,
 		width: 20,
 		height: 20,
-		range: 200,
-		shootInterval: 1000,
-		lastShootTime: 0
+		range: rangeNY,
+		shootInterval: shootIntervalNY,
+		lastShootTime: 0,
+		level: upgradeLevel
 	};
 }
 
 // Funktion til at starte en ny runde
 function startNyRunde() {
 
-
 	cancelAnimationFrame(animationId);
 	if (runde <= maxRunder) {
 		rundeAktiv = true;
 		towersCreatedThisRound += 1;
+		money += 100;
+		document.getElementById('Moneys').innerText = money;
+
 		for (let i = 0; i < firkanterPrRunde * runde; i++) {
 			firkanter.push(createNewSquare());
 		}
@@ -101,11 +133,11 @@ function GameOver() {
 function visbesked() {
 
 	if (runde <= maxRunder) {
-	// Viser besked om ny runde i 2 sekunder
-	ctx.fillStyle = "yellow";
-	ctx.font = "30px Arial";
-	ctx.fillText(`Runde ${runde} starter!`, canvas.width / 2 - 100, canvas.height / 2);
-	runde++;
+		// Viser besked om ny runde i 2 sekunder
+		ctx.fillStyle = "yellow";
+		ctx.font = "30px Arial";
+		ctx.fillText(`Runde ${runde} starter!`, canvas.width / 2 - 100, canvas.height / 2);
+		runde++;
 	}
 }
 function visBesked() {
@@ -138,28 +170,14 @@ function updateSquare(square) {
 
 // Funktion til at fjerne firkanter, der er ude af skærmen eller ramt af projektiler
 function removeOffScreenSquares() {
-    // Fjern firkanter der er ude af skærmen
-    firkanter = removeOffScreen(firkanter);
-
-    // Fjern firkanter der er ramt
-    firkanter = removeHitSquares(firkanter);
-}
-
-function removeOffScreen(firkanter) {
-    // Filtrer ud firkanter der er ude af skærmen
-    return firkanter.filter(square => square.x <= canvas.width + square.width);
-}
-
-function removeHitSquares(firkanter) {
-    // Filtrer ud firkanter der er ramt
-    return firkanter.filter(square => !square.hit);
+	firkanter = firkanter.filter(square => square.x <= canvas.width + square.width && !square.hit);
 }
 
 function logHitSquares(firkanter) {
 	// Gennemgår hver firkant
 	firkanter.forEach(square => {
 		// Tjekker om firkanten er ramt
-	if (square.hit) {
+		if (square.hit) {
 			antalSkudt++;
 			document.getElementById('antalSkudt').innerText = antalSkudt;
 			if (antalSkudt % 10 === 0) {
@@ -170,17 +188,18 @@ function logHitSquares(firkanter) {
 }
 
 function countAndDisplayRemoved(firkanter) {
-    // Gennemgår hver firkant
-    firkanter.forEach(square => {
-        // Tjekker om firkanten er fjernet fra banen
-        if (square.x > canvas.width + square.width) {
-            antalFjernet++;
-            // Opdaterer HTML-elementet med id 'antalFjernet' for at vise antallet af fjernede firkanter
-            document.getElementById('antalFjernet').innerText = antalFjernet;
-        }
-    });
+	// Gennemgår hver firkant
+	firkanter.forEach(square => {
+		// Tjekker om firkanten er fjernet fra banen
+		if (square.x > canvas.width + square.width) {
+			antalFjernet++;
+			// Opdaterer HTML-elementet med id 'antalFjernet' for at vise antallet af fjernede firkanter
+			document.getElementById('antalFjernet').innerText = antalFjernet;
+		}
+	});
 }
 
+// tårne og projektiler
 function AntalTaarneDerKanBygges() {
 	document.getElementById('antalTaarne').innerText = towersCreatedThisRound
 }
@@ -226,6 +245,11 @@ function updateAndDrawTowers(time) {
 	taarn.forEach(tower => {
 		ctx.fillStyle = "green";
 		ctx.fillRect(tower.x, tower.y, tower.width, tower.height);
+		// Tegn opgraderingsniveauet over tårnet
+		ctx.fillStyle = "white";
+		ctx.font = "12px Arial";
+		ctx.textAlign = "center";
+		ctx.fillText("Level " + tower.level, tower.x + tower.width / 2, tower.y - 5);
 
 		// Tjek om tårnet skal skyde
 		if (time - tower.lastShootTime > tower.shootInterval) {
@@ -261,6 +285,7 @@ canvas.addEventListener('click', (event) => {
 		const y = event.clientY - rect.top;
 		taarn.push(createNewTower(x, y));
 		towersCreatedThisRound--;
+
 	}
 	else {
 		visBesked()
@@ -272,7 +297,7 @@ function animate(time) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height); // Rydder canvas
 	GameOver();
 
-AntalTaarneDerKanBygges();
+	AntalTaarneDerKanBygges();
 	firkanter.forEach(updateSquare);
 	firkanter.forEach(drawSquare);
 	logHitSquares(firkanter);

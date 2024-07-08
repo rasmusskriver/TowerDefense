@@ -14,6 +14,14 @@ canvas {
 	display: block;
 	background-color: black;
 }
+#startButton {
+    position: fixed;
+    top: 805px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
+    color: white;
+}
 #besked-container {
     position: fixed;
     top: 10px; /* Juster efter behov */
@@ -43,9 +51,45 @@ canvas {
 #antalTaarneDIV {
 
     position: fixed;
-    top: 100px; /* Juster efter behov */
+    top: 90px; /* Juster efter behov */
     left: 10px; /* Juster efter behov */
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
     color: white;
 }
+.upgradeTower {
+
+    position: fixed;
+    top: 305px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
+    color: white;
+}
+.upgradeTower1 {
+
+    position: fixed;
+    top: 330px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5); /* Juster efter behov */
+    color: white;
+}
+#MoneyInTheBank {
+
+    position: fixed;
+    top: 260px; /* Juster efter behov */
+    left: 10px; /* Juster efter behov */
+    background-color: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+#Moneys {
+    font-weight: bold;
+    color: #4CAF50;
+    margin-left: 5px;
+}
+

@@ -276,3 +276,44 @@ if square = hit {
 	console.log("hit")
 	}
 }
+
+
+
+function removeOffScreenSquares() {
+    // Fjern firkanter der er ude af skærmen
+    firkanter = removeOffScreen(firkanter);
+
+    // Fjern firkanter der er ramt
+    firkanter = removeHitSquares(firkanter);
+}
+
+function removeOffScreen(firkanter) {
+    // Filtrer ud firkanter der er ude af skærmen
+    return firkanter.filter(square => square.x <= canvas.width + square.width);
+}
+
+function removeHitSquares(firkanter) {
+    // Filtrer ud firkanter der er ramt
+    return firkanter.filter(square => !square.hit);
+
+}
+
+
+
+
+
+  const shootIntervalUpgradeAmount = -100;
+
+
+
+function upgradeTower() {
+	// Definer hvor meget vi ønsker at opgradere tårnet med
+	const RangeOpraderAmount = 50;
+	const shootIntervalAmoun = -100;
+
+	rangeNY += RangeOpraderAmount;
+	shootIntervalNY += shootIntervalAmoun;
+	// Opdater opgraderingsniveauet og vis det på siden (hvis nødvendigt)
+	upgradeLevel++;
+	document.getElementById('upgradeLevel').textContent = upgradeLevel;
+}
