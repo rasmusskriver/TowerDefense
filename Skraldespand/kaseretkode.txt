@@ -317,3 +317,9 @@ function upgradeTower() {
 	upgradeLevel++;
 	document.getElementById('upgradeLevel').textContent = upgradeLevel;
 }
+
+
+
+//		for (let i = 0; i < firkanterPrRunde * runde; i++) {
+//			firkanter.push(createNewSquare());
+//		}

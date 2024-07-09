@@ -19,29 +19,30 @@ let rangeNY = 200;
 let shootIntervalNY = 1000;
 let money = 0; // Startpenge
 
+// opgradering af towers
 function upgradeTower() {
-    const upgradeCost = 50; // Omkostning for opgradering
+	const upgradeCost = 50; // Omkostning for opgradering
 
-    // Tjek om der er nok penge til opgraderingen
-    if (money >= upgradeCost) {
-        // Definer hvor meget vi ønsker at opgradere tårnet med
-        const RangeOpraderAmount = 50;
-        const shootIntervalAmoun = -100;
+	// Tjek om der er nok penge til opgraderingen
+	if (money >= upgradeCost) {
+		// Definer hvor meget vi ønsker at opgradere tårnet med
+		const RangeOpraderAmount = 50;
+		const shootIntervalAmoun = -100;
 
-        // Opdater tårnets attributter
-        rangeNY += RangeOpraderAmount;
-        shootIntervalNY += shootIntervalAmoun;
+		// Opdater tårnets attributter
+		rangeNY += RangeOpraderAmount;
+		shootIntervalNY += shootIntervalAmoun;
 
-        // Opdater pengebeholdning og opgraderingsniveau
-        money -= upgradeCost;
-        upgradeLevel++;
+		// Opdater pengebeholdning og opgraderingsniveau
+		money -= upgradeCost;
+		upgradeLevel++;
 
-        // Opdater HTML-elementer
-        document.getElementById('Moneys').textContent = money;
-        document.getElementById('upgradeLevel').textContent = upgradeLevel;
-    } else {
-        alert("Du har ikke nok penge til at opgradere tårnet.");
-    }
+		// Opdater HTML-elementer
+		document.getElementById('Moneys').textContent = money;
+		document.getElementById('upgradeLevel').textContent = upgradeLevel;
+} else {
+		alert("Du har ikke nok penge til at opgradere tårnet.");
+	}
 }
 
 // Funktion til at generere et tilfældigt heltal mellem min og max
@@ -109,9 +110,19 @@ function startNyRunde() {
 		money += 100;
 		document.getElementById('Moneys').innerText = money;
 
-		for (let i = 0; i < firkanterPrRunde * runde; i++) {
-			firkanter.push(createNewSquare());
+		async function createSquaresWithDelay() {
+			for (let i = 0; i < firkanterPrRunde * runde; i++) {
+				const delay = (i === 0) ? 5000 : 200; // 5000 ms (5 sekunder) før første iteration, 200 ms (0,2 sekunder) efterfølgende
+				await new Promise(resolve => {
+					setTimeout(() => {
+						firkanter.push(createNewSquare());
+						resolve();
+					}, delay);
+				});
+			}
 		}
+		createSquaresWithDelay();
+
 		setTimeout(() => {
 			animate();
 		}, 2000);
@@ -177,7 +188,7 @@ function logHitSquares(firkanter) {
 	// Gennemgår hver firkant
 	firkanter.forEach(square => {
 		// Tjekker om firkanten er ramt
-		if (square.hit) {
+	if (square.hit) {
 			antalSkudt++;
 			document.getElementById('antalSkudt').innerText = antalSkudt;
 			if (antalSkudt % 10 === 0) {
