@@ -11,6 +11,25 @@
 	<body>
 		<h1>Tower defense spillet</h1>
 		<canvas id="gameCanvas" width="1000" height="800"></canvas>
+		<button id="startButton">Start Ny Runde</button>
+		<div id="besked-container"></div>
+		<div id="antalSkudtDIV">
+			Antal skudt: <span id="antalSkudt">0</span>
+		</div>
+		<div id="antalfjernetDIV">
+			Fjernet:   <span id="antalFjernet">0</span>
+		</div>
+		<div id="antalTaarneDIV">
+			Antal Tårne der kan bygges:   <span id="antalTaarne">0</span>
+		</div>
+
+		<div id="MoneyInTheBank">
+			Penge:   <span id="Moneys">0</span>
+		</div>
+		<button class="upgradeTower" onclick="upgradeTower()">Opgrader Tårne</button>
+		<p class="upgradeTower1">Opgraderingsniveau: <span id="upgradeLevel">0</span></p>
+
+
 		<script src="game.js"></script>
 
 	</body>

@@ -239,3 +239,87 @@ gameLoop();
 		<!--
 <input type="text" id="inputField" placeholder="skriv noget">
 		-->
+
+
+function createNewTower(x, y) {
+	if (towersCreatedThisRound < 2) {
+		towersCreatedThisRound++;
+		return {
+			x: x,
+			y: y,
+			width: 20,
+			height: 20,
+			range: 200,
+			shootInterval: 1000,
+			lastShootTime: 0
+		};
+	}
+	else {
+		console.log("ikke flere")
+	}
+}
+
+
+
+// function removeOffScreenSquares() {
+//	firkanter = firkanter.filter(square => square.x <= canvas.width + square.width && !square.hit);
+//}
+
+
+
+function logHitSquares(firkanter) {
+    // Filter squares that have been hit
+    const hitSquares = firkanter.filter(square => square.hit);
+    // Log the hit squares
+    // console.log(hitSquares);
+if square = hit {
+	console.log("hit")
+	}
+}
+
+
+
+function removeOffScreenSquares() {
+    // Fjern firkanter der er ude af skærmen
+    firkanter = removeOffScreen(firkanter);
+
+    // Fjern firkanter der er ramt
+    firkanter = removeHitSquares(firkanter);
+}
+
+function removeOffScreen(firkanter) {
+    // Filtrer ud firkanter der er ude af skærmen
+    return firkanter.filter(square => square.x <= canvas.width + square.width);
+}
+
+function removeHitSquares(firkanter) {
+    // Filtrer ud firkanter der er ramt
+    return firkanter.filter(square => !square.hit);
+
+}
+
+
+
+
+
+  const shootIntervalUpgradeAmount = -100;
+
+
+
+function upgradeTower() {
+	// Definer hvor meget vi ønsker at opgradere tårnet med
+	const RangeOpraderAmount = 50;
+	const shootIntervalAmoun = -100;
+
+	rangeNY += RangeOpraderAmount;
+	shootIntervalNY += shootIntervalAmoun;
+	// Opdater opgraderingsniveauet og vis det på siden (hvis nødvendigt)
+	upgradeLevel++;
+	document.getElementById('upgradeLevel').textContent = upgradeLevel;
+}
+
+
+
+//		for (let i = 0; i < firkanterPrRunde * runde; i++) {
+//			firkanter.push(createNewSquare());
+//		}
