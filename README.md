@@ -16,3 +16,6 @@
 - Er der behov for yderligere spilfeatures?
 - Skal brugergrænsefladen forbedres eller udvides?
 - Skal der tilføjes grafik, lydeffekter eller animationsmuligheder?
+
+## Planer for upcoming features
+- Tilføj Highscore modul
